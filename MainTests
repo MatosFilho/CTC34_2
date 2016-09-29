@@ -1,0 +1,138 @@
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+
+import org.junit.Before;
+import org.junit.Test;
+
+
+public class MainTests {
+	Main M;
+	
+	@Before
+	public void setUP() {
+		M = new Main();
+	}
+	
+	@Test
+	public void verificaNumeroDeArestas() {
+		M.identificaAutomato("a+b");
+		assertEquals(2,M.numeroDeArestas());
+		M.identificaAutomato("a+b+c");
+		assertEquals(3,M.numeroDeArestas());
+		M.identificaAutomato("ab");
+		assertEquals(2,M.numeroDeArestas());
+		M.identificaAutomato("abc");
+		assertEquals(3,M.numeroDeArestas());
+	}
+	//TESTES SEM USO DO PARENTESES
+	@Test
+	public void verificaUniaoSemParenteses() {
+		M.identificaAutomato("a+b");
+		try {
+			assertEquals("0->a->1;0->b->1", M.retornaEstados());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		M.identificaAutomato("a+b+c");
+		try {
+			assertEquals("0->a->1;0->b->1;0->c->1", M.retornaEstados());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void verificaConcatenacaoSemParenteses() {
+		M.identificaAutomato("ab");
+		try {
+			assertEquals("0->a->2->b->1", M.retornaEstados());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		M.identificaAutomato("abc");
+		try {
+			assertEquals("0->a->2->b->3->c->1", M.retornaEstados());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void verificaUniaoEConcatenacaoSemParenteses() {
+		M.identificaAutomato("ab+c");
+		try {
+			assertEquals("0->a->2;0->c->1;2->b->1", M.retornaEstados());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		M.identificaAutomato("ab+bc");
+		try {
+			assertEquals("0->a->2;0->b->3;2->b->1;3->c->1", M.retornaEstados());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void verificaFechoDeKleeneSemParenteses() {
+		M.identificaAutomato("ab+c*");
+		try {
+			assertEquals("0->a->2;0->&->3;2->b->1;3->c->3->&->1", M.retornaEstados());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		M.identificaAutomato("ab*+bc");
+		try {
+			assertEquals("0->a->2;0->b->3;2->&->4;3->c->1;4->b->4->&->1", M.retornaEstados());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	//TESTES COM USO DO PARENTESES
+		@Test
+		public void verificaUniaoComParenteses() throws IOException {
+			M.identificaAutomato("a+(b)");
+			assertEquals("0->a->1;0->b->1", M.retornaEstados());
+			M.identificaAutomato("a+(b+c)");
+			assertEquals("0->a->1;0->b->1;0->c->1", M.retornaEstados());
+		}
+		
+		@Test
+		public void verificaConcatenacaoComParenteses() throws IOException {
+			M.identificaAutomato("a(b)");
+			assertEquals("0->a->2->b->1", M.retornaEstados());
+			M.identificaAutomato("a(bc)");
+			assertEquals("0->a->2->b->3->c->1", M.retornaEstados());
+		}
+		
+		@Test
+		public void verificaUniaoEConcatenacaoComParenteses() throws IOException {
+			M.identificaAutomato("ab+c");
+			assertEquals("0->a->2;0->c->1;2->b->1", M.retornaEstados());
+			M.identificaAutomato("ab+(bc)");
+			assertEquals("0->a->2;0->b->3;2->b->1;3->c->1", M.retornaEstados());
+		}
+		@Test
+		public void verificaFechoDeKleeneComParenteses() throws IOException {
+			M.identificaAutomato("(ab)+(c*)");
+			assertEquals("0->a->2;0->&->3;2->b->1;3->c->3->&->1", M.retornaEstados());
+			M.identificaAutomato("a(b*)+bc");
+			assertEquals("0->a->2;0->b->3;2->&->4;3->c->1;4->b->4->&->1", M.retornaEstados());
+			M.identificaAutomato("ab+(b+c)*");
+			assertEquals("0->a->2;0->&->3;2->b->1;3->b->3->&->1;3->c->3", M.retornaEstados());
+			System.out.println("Deu merda aqui");
+			M.identificaAutomato("a*b");
+			assertEquals("0->&->3;2->b->1;3->a->3->&->2", M.retornaEstados());
+		}
+		
+}
