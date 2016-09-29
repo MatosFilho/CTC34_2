@@ -1,0 +1,72 @@
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.Test;
+
+
+public class SecondTests {
+	Main M;
+	
+	@Before
+	public void setUP() {
+		M = new Main();
+	}
+	
+	@Test
+	public void verificaAutomato1() {
+		M.identificaAutomato("a+b");
+		assertTrue(M.verificaSentenca(0,"a"));
+		assertTrue(M.verificaSentenca(0,"b"));
+		M.identificaAutomato("a+b+c");
+		assertTrue(M.verificaSentenca(0,"a"));
+		assertTrue(M.verificaSentenca(0,"b"));
+		assertTrue(M.verificaSentenca(0,"c"));
+		assertFalse(M.verificaSentenca(0,"ab"));
+		M.identificaAutomato("ab");
+		assertTrue(M.verificaSentenca(0,"ab"));
+		assertFalse(M.verificaSentenca(0,"abc"));
+		assertFalse(M.verificaSentenca(0,"a"));
+	}
+	
+	@Test
+	public void verificaAutomato2() {
+		M.identificaAutomato("ab+c");
+		assertTrue(M.verificaSentenca(0,"ab"));
+		assertTrue(M.verificaSentenca(0,"c"));
+		assertFalse(M.verificaSentenca(0,"abc"));
+		M.identificaAutomato("ab+bc");
+		assertTrue(M.verificaSentenca(0,"ab"));
+		assertFalse(M.verificaSentenca(0,"c"));
+		assertFalse(M.verificaSentenca(0,"abc"));
+		assertTrue(M.verificaSentenca(0, "bc"));
+	}
+	
+	@Test
+	public void verificaAutomato3() {
+		M.identificaAutomato("ab+c*");
+		assertTrue(M.verificaSentenca(0, "ab"));
+		assertTrue(M.verificaSentenca(0, "ccccc"));
+		assertTrue(M.verificaSentenca(0, "cccc"));
+		System.out.println("Teste errado");
+		assertTrue(M.verificaSentenca(0, "c"));
+		assertFalse(M.verificaSentenca(0, "abc"));
+		M.identificaAutomato("ab*+bc");
+		assertTrue(M.verificaSentenca(0, "ab"));
+		assertTrue(M.verificaSentenca(0, "abbb"));
+		assertTrue(M.verificaSentenca(0, "bc"));
+		assertFalse(M.verificaSentenca(0, "c"));
+	}
+	@Test
+	public void verificaAutomato4() {
+		M.identificaAutomato("ab+(b+c)*");
+		assertTrue(M.verificaSentenca(0, "ab"));
+		assertTrue(M.verificaSentenca(0, "cbccbcc"));
+		assertTrue(M.verificaSentenca(0, "cccc"));
+		assertTrue(M.verificaSentenca(0, "c"));
+		assertTrue(M.verificaSentenca(0, "bbbbb"));
+		assertTrue(M.verificaSentenca(0, "bc"));
+		assertTrue(M.verificaSentenca(0, "abbb"));
+		assertTrue(M.verificaSentenca(0, "abc"));
+		assertTrue(M.verificaSentenca(0, "a"));
+	}
+}
